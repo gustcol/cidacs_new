@@ -105,7 +105,7 @@ spec:
         - name: airflow-pod-template
           mountPath: /opt/airflow/kubernetes/pod_template
       - name: git-sync
-        image: safrapay.azurecr.io/bigdata/tools/git-sync:1.0.2
+        image: gustcol/cidacs:git-sync-0.0.1
         resources:
           limits:
             cpu: 100m
