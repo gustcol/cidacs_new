@@ -23,10 +23,10 @@ RUN usermod -aG sudo airflow && echo "airflow  ALL=(ALL) NOPASSWD:ALL" >> /etc/s
 USER airflow
 
 RUN sudo apt update && sudo apt install default-jdk scala wget procps  git -y
-RUN wget https://downloads.apache.org/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz && \
-    tar xvf spark-3.1.2-bin-hadoop3.2.tgz && \
-    rm -rf spark-3.1.2-bin-hadoop3.2.tgz && \
-    sudo mv spark-3.1.2-bin-hadoop3.2 /opt/spark && \
+RUN wget https://downloads.apache.org/spark/spark-3.1.3/spark-3.1.3-bin-hadoop3.2.tgz && \
+    tar xvf spark-3.1.3-bin-hadoop3.2.tgz && \
+    rm -rf spark-3.1.3-bin-hadoop3.2.tgz && \
+    sudo mv spark-3.1.3-bin-hadoop3.2 /opt/spark && \
     mkdir -p /opt/spark/jars/ && \
     wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-data-lake-store-sdk/2.3.9/azure-data-lake-store-sdk-2.3.9.jar -O /opt/spark/jars/azure-data-lake-store-sdk-2.3.9.jar && \
     wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure-datalake/3.3.1/hadoop-azure-datalake-3.3.1.jar -O /opt/spark/jars/hadoop-azure-datalake-3.3.1.jar && \
