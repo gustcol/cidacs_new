@@ -26,7 +26,7 @@ data:
     spec:
       initContainers:
       - name: git-sync
-        image: cidacs.azurecr.io/bigdata/tools/git-sync:1.0.2
+        image: gustcol/cidacs:sync-0.0.1
         env:
           - name: AIRFLOW_GIT_PATH
             value: /opt/airflow/dags
@@ -37,7 +37,7 @@ data:
           - name: SLEEP_TIME
             value: "10"
           - name: GIT_REPO_FULL
-            value: "https://johnata.lima:344zxf65g75w7igdn3m6ykjjyi5p6eznuoj72m5tlj4ohcwobwva@dev.azure.com/cidacsDigital/Data-Architecture/_git/cidacs-dataproc-airflow"
+            value: "https://github.com/gustcol/airflow-dags"
         volumeMounts:
         - name: airflow-dags
           mountPath: /opt/airflow/
@@ -219,8 +219,8 @@ data:
     [kubernetes]
     airflow_configmap = airflow-configmap
     pod_template_file = /opt/airflow/kubernetes/pod_template/template.yaml
-    worker_container_repository = cidacs.azurecr.io/bigdata/airflow/airflow-worker
-    worker_container_tag = 1.0.4
+    worker_container_repository = gustcol/cidacs
+    worker_container_tag = 0.0.1
     worker_container_image_pull_policy = Always
     worker_service_account_name = airflow
     namespace = develop
