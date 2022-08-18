@@ -87,7 +87,7 @@ spec:
             memory: 512Mi
         env:
           - name: AIRFLOW_KUBE_NAMESPACE
-            value: safrapay-bigdata-dev
+            value: develop
           - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
             value: postgresql+psycopg2://airflow:airflow@airflow-postgre/airflow
           - name: AIRFLOW__CELERY__RESULT_BACKEND
