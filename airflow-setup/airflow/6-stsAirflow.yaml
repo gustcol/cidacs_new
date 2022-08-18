@@ -1,0 +1,169 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: airflow
+  namespace: safrapay-bigdata-dev
+  labels:
+    app: airflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: "airflow"
+  template:
+    metadata:
+      labels:
+        app: airflow
+    spec:
+      serviceAccountName: airflow
+      initContainers:
+      - name: set-permision
+        image: gustcol/cidacs:airflow-0.0.1
+        command: ['sh', '-c', "sudo chown -R airflow:50000 /opt/airflow/dags && sudo chown -R airflow:50000 /opt/airflow/logs && sudo chown -R 50000:50000 /opt/spark/work/ && airflow db init"]
+        env:
+          - name: AIRFLOW_KUBE_NAMESPACE
+            value: safrapay-bigdata-dev
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            value: postgresql+psycopg2://airflow:airflow@airflow-postgre/airflow
+          - name: AIRFLOW__CELERY__RESULT_BACKEND
+            value:  db+postgresql://airflow:airflow@airflow-postgre/airflow
+          - name: AIRFLOW__CORE__EXECUTOR
+            value: "CeleryExecutor"
+        volumeMounts:
+          - mountPath: /opt/airflow/logs/
+            name: airflow-logs
+          - mountPath: /opt/airflow/dags
+            name: airflow-dags
+          - mountPath: /opt/spark/work/
+            name: airflow-worker-logs
+          - name: airflow-configmap
+            mountPath: /opt/airflow/airflow.cfg
+            subPath: airflow.cfg
+      containers:
+      - name: webserver
+        image: gustcol/cidacs:airflow-0.0.1
+        args: ["webserver"]
+        resources:
+          limits:
+            cpu: 1
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - name: web-ui
+          containerPort: 8080
+        env:
+          - name: AIRFLOW_KUBE_NAMESPACE
+            value: safrapay-bigdata-dev
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            value: postgresql+psycopg2://airflow:airflow@airflow-postgre/airflow
+          - name: AIRFLOW__CELERY__RESULT_BACKEND
+            value:  db+postgresql://airflow:airflow@airflow-postgre/airflow
+          - name: AIRFLOW__CORE__EXECUTOR
+            value: "CeleryExecutor"
+        volumeMounts:
+        - name: airflow-configmap
+          mountPath: /opt/airflow/airflow.cfg
+          subPath: airflow.cfg
+        - name: airflow-dags
+          mountPath: /opt/airflow/
+        - mountPath: /opt/airflow/logs/
+          name: airflow-logs
+        - name: airflow-pod-template
+          mountPath: /opt/airflow/kubernetes/pod_template
+      - name: scheduler
+        image: gustcol/cidacs:airflow-0.0.1
+        args: ["scheduler"]
+        resources:
+          limits:
+            cpu: 500
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        env:
+          - name: AIRFLOW_KUBE_NAMESPACE
+            value: safrapay-bigdata-dev
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            value: postgresql+psycopg2://airflow:airflow@airflow-postgre/airflow
+          - name: AIRFLOW__CELERY__RESULT_BACKEND
+            value:  db+postgresql://airflow:airflow@airflow-postgre/airflow
+          - name: AIRFLOW__CORE__EXECUTOR
+            value: "KubernetesExecutor"
+        volumeMounts:
+        - name: airflow-configmap
+          mountPath: /opt/airflow/airflow.cfg
+          subPath: airflow.cfg
+        - name: airflow-logs
+          mountPath: /opt/airflow/logs/
+        - name: airflow-dags
+          mountPath: /opt/airflow/
+        - name: airflow-pod-template
+          mountPath: /opt/airflow/kubernetes/pod_template
+      - name: git-sync
+        image: safrapay.azurecr.io/bigdata/tools/git-sync:1.0.2
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+        env:
+          - name: SLEEP_TIME
+            value: "60"
+          - name: AIRFLOW_GIT_PATH
+            value: /opt/airflow/dags
+          - name: AIRFLOW_GIT_BRANCH
+            value: develop
+          - name: GIT_DISCOVERY_ACROSS_FILESYSTEM
+            value: "1"
+          - name: GIT_REPO_FULL
+            value: "https://johnata.lima:344zxf65g75w7igdn3m6ykjjyi5p6eznuoj72m5tlj4ohcwobwva@dev.azure.com/SafrapayDigital/Data-Architecture/_git/safrapay-dataproc-airflow"
+        volumeMounts:
+        - name: airflow-dags
+          mountPath: /opt/airflow/
+      - name: filebeat
+        image: safrapay.azurecr.io/observability/elastic/filebeat/filebeat:7.9.2
+        imagePullPolicy: IfNotPresent
+        args:
+          - '-c'
+          - '/usr/share/filebeat/filebeat.yml'
+          - '-e'
+        resources:
+          limits:
+            cpu: 200m
+            memory: 1000Mi
+          requests:
+            cpu: 10m
+            memory: 320Mi
+        volumeMounts:
+          - mountPath: /opt/airflow/logs/
+            name: airflow-logs
+          - mountPath: /opt/spark/work/
+            name: airflow-worker-logs
+          - mountPath: /usr/share/filebeat/filebeat.yml
+            name: airflow-filebeat
+            subPath: filebeat.yml
+      volumes:
+      - name: airflow-dags
+        emptyDir: {}
+      - name: airflow-configmap
+        configMap:
+          name: airflow-configmap
+      - name: airflow-pod-template
+        configMap:
+          name: airflow-pod-template
+      - name: airflow-logs
+        persistentVolumeClaim:
+          claimName: airflow-logs
+      - name: airflow-worker-logs
+        persistentVolumeClaim:
+          claimName: airflow-worker-logs
+      - name: airflow-filebeat
+        configMap:
+          name: airflow-filebeat

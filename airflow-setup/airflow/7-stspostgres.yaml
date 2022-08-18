@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: airflow-postgre
+  namespace: develop
+  labels:
+    app: airflow-postgre
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-postgre
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: "airflow-postgre"
+  template:
+    metadata:
+      labels:
+        app: airflow-postgre
+    spec:
+      initContainers:
+      - name: set-permision
+        image: gustcol/cidacs:postgre-0.0.1
+        command: ['sh', '-c', "chown -R postgres:postgres /var/lib/postgresql"]
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: airflow-postgres
+        securityContext:
+          runAsUser: 0
+      containers:
+      - name: safrapay-dataproc-airflow
+        image: gustcol/cidacs:postgre-0.0.1
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        env:
+          - name: POSTGRES_PASSWORD
+            value: "airflow"
+          - name: POSTGRES_USER
+            value: "airflow"
+          - name: POSTGRES_DB
+            value: "airflow"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: airflow-postgres
+      volumes:
+        - name: airflow-postgres
+          persistentVolumeClaim:
+            claimName: airflow-postgres
