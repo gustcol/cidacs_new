@@ -223,7 +223,7 @@ data:
     worker_container_tag = 1.0.4
     worker_container_image_pull_policy = Always
     worker_service_account_name = airflow
-    namespace = cidacs-bigdata-dev
+    namespace = develop
     delete_worker_pods = True
     dags_in_image = False
     git_repo =
