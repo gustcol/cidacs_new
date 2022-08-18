@@ -127,28 +127,6 @@ spec:
         volumeMounts:
         - name: airflow-dags
           mountPath: /opt/airflow/
-      - name: filebeat
-        image: safrapay.azurecr.io/observability/elastic/filebeat/filebeat:7.9.2
-        imagePullPolicy: IfNotPresent
-        args:
-          - '-c'
-          - '/usr/share/filebeat/filebeat.yml'
-          - '-e'
-        resources:
-          limits:
-            cpu: 200m
-            memory: 1000Mi
-          requests:
-            cpu: 10m
-            memory: 320Mi
-        volumeMounts:
-          - mountPath: /opt/airflow/logs/
-            name: airflow-logs
-          - mountPath: /opt/spark/work/
-            name: airflow-worker-logs
-          - mountPath: /usr/share/filebeat/filebeat.yml
-            name: airflow-filebeat
-            subPath: filebeat.yml
       imagePullSecrets:
       - name: docker-login
       volumes:
