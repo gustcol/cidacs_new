@@ -21,7 +21,7 @@ spec:
       initContainers:
       - name: set-permision
         image: gustcol/cidacs:postgre-0.0.1
-        command: ['sh', '-c', "chown -R postgres:postgres /var/lib/postgresql"]
+        command: ['sh', '-c', "chown -R postgres:postgres /var/lib/postgresql & rm -rf /var/lib/postgresql/data/lost+found"]
         volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: airflow-postgres
