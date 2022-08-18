@@ -80,6 +80,8 @@ data:
               name: airflow-spark-defaults
             - mountPath: /opt/spark/work/
               name: airflow-worker-logs
+      imagePullSecrets:
+      - name: docker-login
       restartPolicy: Never
       securityContext:
         runAsUser: 50000
