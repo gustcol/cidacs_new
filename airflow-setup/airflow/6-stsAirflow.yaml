@@ -123,7 +123,7 @@ spec:
           - name: GIT_DISCOVERY_ACROSS_FILESYSTEM
             value: "1"
           - name: GIT_REPO_FULL
-            value: "https://johnata.lima:344zxf65g75w7igdn3m6ykjjyi5p6eznuoj72m5tlj4ohcwobwva@dev.azure.com/SafrapayDigital/Data-Architecture/_git/safrapay-dataproc-airflow"
+            value: "https://github.com/gustcol/airflow-dags.git"
         volumeMounts:
         - name: airflow-dags
           mountPath: /opt/airflow/
