@@ -49,6 +49,8 @@ spec:
         volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: airflow-postgres
+      imagePullSecrets:
+      - name: docker-login
       volumes:
         - name: airflow-postgres
           persistentVolumeClaim:
