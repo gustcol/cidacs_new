@@ -149,6 +149,8 @@ spec:
           - mountPath: /usr/share/filebeat/filebeat.yml
             name: airflow-filebeat
             subPath: filebeat.yml
+      imagePullSecrets:
+      - name: docker-login
       volumes:
       - name: airflow-dags
         emptyDir: {}
