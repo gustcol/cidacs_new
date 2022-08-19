@@ -26,7 +26,7 @@ data:
     spec:
       initContainers:
       - name: git-sync
-        image: gustcol/cidacs:sync-0.0.1
+        image: gustcol/cidacs:git-sync-0.0.1
         env:
           - name: AIRFLOW_GIT_PATH
             value: /opt/airflow/dags
