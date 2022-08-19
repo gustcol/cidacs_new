@@ -97,8 +97,7 @@ data:
           configMap:
             name: airflow-spark-config
         - name: airflow
-          persistentVolumeClaim:
-            claimName: airflow-dags
+          emptyDir: {}
         - name: airflow-logs
           persistentVolumeClaim:
             claimName: airflow-logs
