@@ -1,4 +1,4 @@
 #! /bin/bash
 set -e
 
-exec "$@"
+exec "$@" && tail -f /opt/spark/logs/*.out
