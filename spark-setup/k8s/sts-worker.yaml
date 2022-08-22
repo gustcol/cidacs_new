@@ -21,7 +21,7 @@ spec:
       containers:
       - name: worker
         image: gustcol/cidacs:spark-0.0.10
-        args: ["/opt/spark/sbin/start-worker.sh"]
+        args: ["/opt/spark/sbin/start-worker.sh", ""]
         imagePullPolicy: Always
         resources:
           limits:
@@ -38,9 +38,9 @@ spec:
         #     value: "7077"
         #   - name: SPARK_MASTER
         #     value: "spark://master-spark:7077"
-        volumeMounts:
-        - name: spark-config
-          mountPath: /opt/spark/conf/
+        # volumeMounts:
+        # - name: spark-config
+        #   mountPath: /opt/spark/conf/
       imagePullSecrets:
       - name: docker-login
       volumes:
