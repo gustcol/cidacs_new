@@ -33,11 +33,11 @@ spec:
         ports:
         - name: worker
           containerPort: 7000
-        env:
-          - name: SPARK_MASTER_PORT
-            value: "7077"
-          - name: SPARK_MASTER
-            value: "spark://master-spark:7077"
+        # env:
+        #   - name: SPARK_MASTER_PORT
+        #     value: "7077"
+        #   - name: SPARK_MASTER
+        #     value: "spark://master-spark:7077"
         volumeMounts:
         - name: spark-config
           mountPath: /opt/spark/conf/
