@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: master-spark
+  namespace: develop
+  labels:
+    app: master-spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master-spark
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: "spark"
+  template:
+    metadata:
+      labels:
+        app: master-spark
+    spec:
+      containers:
+      - name: master
+        image: gustcol/cidacs:spark-0.0.1
+        args: ["./sbin/start-master.sh"]
+        resources:
+          limits:
+            cpu: 1
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - name: web-ui
+          containerPort: 8080
+        - name: master
+          containerPort: 7077
+        env:
+          - name: SPARK_MASTER_PORT
+            value: "7077"
+          - name: SPARK_MASTER_WEBUI_PORT
+            value: "8080"
+          - name: SPARK_MASTER
+            value: "spark://master-spark:7077"
+          - name: SPARK_WORKER_PORT
+            value: "7000"
+          - name: SPARK_MASTER_HOST
+            value: "master-spark"
+        volumeMounts:
+        - name: spark-config
+          mountPath: /opt/spark/conf/
+      imagePullSecrets:
+      - name: docker-login
+      volumes:
+      - name: spark-config
+        configMap:
+          name: spark-config

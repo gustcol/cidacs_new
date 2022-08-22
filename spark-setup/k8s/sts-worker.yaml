@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: worker-spark
+  namespace: develop
+  labels:
+    app: worker-spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker-spark
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: "spark"
+  template:
+    metadata:
+      labels:
+        app: worker-spark
+    spec:
+      containers:
+      - name: worker
+        image: gustcol/cidacs:spark-0.0.1
+        args: ["./sbin/start-worker.sh"]
+        resources:
+          limits:
+            cpu: 1
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - name: worker
+          containerPort: 7000
+        env:
+          - name: SPARK_MASTER_PORT
+            value: "7077"
+          - name: SPARK_MASTER
+            value: "spark://master-spark:7077"
+          - name: SPARK_MASTER_HOST
+            value: "master-spark"
+        volumeMounts:
+        - name: spark-config
+          mountPath: /opt/spark/conf/
+      imagePullSecrets:
+      - name: docker-login
+      volumes:
+      - name: spark-config
+        configMap:
+          name: spark-config
