@@ -20,8 +20,9 @@ spec:
     spec:
       containers:
       - name: master
-        image: gustcol/cidacs:spark-0.0.8
+        image: gustcol/cidacs:spark-0.0.1
         args: ["/opt/spark/sbin/start-master.sh"]
+        imagePullPolicy: Always
         resources:
           limits:
             cpu: 1
