@@ -21,7 +21,7 @@ spec:
       containers:
       - name: master
         image: gustcol/cidacs:spark-0.0.4
-        args: ["./sbin/start-master.sh"]
+        args: ["../sbin/start-master.sh"]
         resources:
           limits:
             cpu: 1
