@@ -43,8 +43,6 @@ spec:
             value: "spark://master-spark:7077"
           - name: SPARK_WORKER_PORT
             value: "7000"
-          - name: SPARK_MASTER_HOST
-            value: "master-spark"
         volumeMounts:
         - name: spark-config
           mountPath: /opt/spark/conf/
