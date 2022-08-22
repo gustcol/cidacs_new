@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
       - name: worker
-        image: gustcol/cidacs:spark-0.0.7
-        args: ["/opt/spark/sbin/start-worker.sh", "$SPARK_MASTER"]
+        image: gustcol/cidacs:spark-0.0.8
+        args: ["/opt/spark/sbin/start-worker.sh"]
         resources:
           limits:
             cpu: 1

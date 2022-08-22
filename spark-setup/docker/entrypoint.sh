@@ -1,7 +1,12 @@
 #! /bin/bash
 set -e
 
-sh "$@"
+if grep -q master ; then
+    sh "$@"
+else
+    sh "$@" $SPARK_MASTER
+fi
+
 while [ true ]
 do
     tail -f /opt/spark/logs/*.out
