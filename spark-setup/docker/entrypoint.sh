@@ -1,4 +1,8 @@
 #! /bin/bash
 set -e
 
-exec "$@" && tail -f /opt/spark/logs/*.out
+sh "$@"
+while [ true ]
+do
+    tail -f /opt/spark/logs/*.out
+done
