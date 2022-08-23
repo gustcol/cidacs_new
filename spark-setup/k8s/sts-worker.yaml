@@ -20,9 +20,8 @@ spec:
     spec:
       containers:
       - name: worker
-        image: gustcol/cidacs:spark-0.0.10
-        command: [/opt/spark/sbin/start-worker.sh"]
-        args: ["spark://master-spark:7077"]
+        image: gustcol/cidacs:spark-0.0.2
+        args: ["worker"]
         imagePullPolicy: Always
         resources:
           limits:
