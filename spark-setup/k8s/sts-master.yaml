@@ -35,18 +35,24 @@ spec:
           containerPort: 8080
         - name: master
           containerPort: 7077
+      - name: jupyter
+        image: gustcol/cidacs:jupyter-0.0.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 1
+            memory: 4096Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - name: jupyter-web-ui
+          containerPort: 8888
         env:
-          - name: SPARK_MASTER_PORT
-            value: "7077"
-          - name: SPARK_MASTER_WEBUI_PORT
-            value: "8080"
-          - name: SPARK_MASTER
-            value: "spark://master-spark:7077"
-          - name: SPARK_WORKER_PORT
-            value: "7000"
-        volumeMounts:
-        - name: spark-config
-          mountPath: /opt/spark/conf/
+          - name: JUPYTER_ENABLE_LAB
+            value: "yes"
+          - name: JUPYTER_TOKEN
+            value: "NiceToken"
       imagePullSecrets:
       - name: docker-login
       volumes:
