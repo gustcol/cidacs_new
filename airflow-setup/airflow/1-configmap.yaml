@@ -175,7 +175,8 @@ data:
     # Number of seconds to wait before refreshing a batch of workers.
     worker_refresh_interval = 30
     # Secret key used to run your flask app
-    secret_key = ezBcrXWjlTtEN8VwygGm6K
+    # Not stored here. Set AIRFLOW__WEBSERVER__SECRET_KEY from the
+    # airflow-secrets Secret (key: webserver_secret_key), see 6-stsAirflow.yaml.
     # Number of workers to run the Gunicorn web server
     workers = 4
     # The worker class gunicorn should use. Choices include
